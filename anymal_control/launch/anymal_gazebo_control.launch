@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <param name="robot_description"
+        command="$(find xacro)/xacro --inorder '$(find anymal_b_simple_description)/urdf/anymal.urdf'" />
+
+    <arg name="x" default="0" />
+    <arg name="y" default="0" />
+    <arg name="z" default="0.6" />
+    <arg name="ros_control_file" default="$(find anymal_control)/config/ros_control.yaml" />
+    <arg name="respawn_controller" default="false" />
+
+    <node name="anymal_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
+        args="-urdf -param robot_description -model anymal -x $(arg x) -y $(arg y) -z $(arg z)" />
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <!-- <arg name="world_name" value="$(find youbot_description)/worlds/empty_world.world" /> -->
+        <arg name="paused" value="true" />
+        <arg name="use_sim_time" value="true" />
+        <arg name="gui" value="true" />
+        <arg name="headless" value="false" />
+        <arg name="debug" value="false" />
+    </include>
+
+    <rosparam file="$(arg ros_control_file)" command="load" />
+    <node name="controller_spawner" pkg="controller_manager" type="spawner"
+        respawn="$(arg respawn_controller)"
+        output="screen" args="joint_states_controller joint_group_position_controller">
+</node>
+
+</launch>

@@ -34,38 +34,42 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <towr/models/single_rigid_body_dynamics.h>
 #include <towr/models/endeffector_mappings.h>
 
-namespace towr {
+namespace towr
+{
 
-/**
- * @brief The Kinematics of the quadruped robot HyQ.
- */
-class HyqKinematicModel : public KinematicModel {
-public:
-  HyqKinematicModel () : KinematicModel(4)
+  /**
+   * @brief The Kinematics of the quadruped robot HyQ.
+   */
+  class HyqKinematicModel : public KinematicModel
   {
-    const double x_nominal_b = 0.31;
-    const double y_nominal_b = 0.29;
-    const double z_nominal_b = -0.58;
+  public:
+    HyqKinematicModel() : KinematicModel(4)
+    {
 
-    nominal_stance_.at(LF) <<  x_nominal_b,   y_nominal_b, z_nominal_b;
-    nominal_stance_.at(RF) <<  x_nominal_b,  -y_nominal_b, z_nominal_b;
-    nominal_stance_.at(LH) << -x_nominal_b,   y_nominal_b, z_nominal_b;
-    nominal_stance_.at(RH) << -x_nominal_b,  -y_nominal_b, z_nominal_b;
+      const double x_nominal_b = 0.34;
+      const double y_nominal_b = 0.19;
+      const double z_nominal_b = -0.42;
 
-    max_dev_from_nominal_ << 0.25, 0.20, 0.10;
-  }
-};
+      nominal_stance_.at(LF) << x_nominal_b, y_nominal_b, z_nominal_b;
+      nominal_stance_.at(RF) << x_nominal_b, -y_nominal_b, z_nominal_b;
+      nominal_stance_.at(LH) << -x_nominal_b, y_nominal_b, z_nominal_b;
+      nominal_stance_.at(RH) << -x_nominal_b, -y_nominal_b, z_nominal_b;
 
-/**
- * @brief The Dynamics of the quadruped robot HyQ.
- */
-class HyqDynamicModel : public SingleRigidBodyDynamics {
-public:
-  HyqDynamicModel() : SingleRigidBodyDynamics(83,
-                      4.26, 8.97, 9.88, -0.0063, 0.193, 0.0126,
-                      4) {}
-};
+      max_dev_from_nominal_ << 0.15, 0.1, 0.10;
+    }
+  };
 
-} /* namespace towr */
+  /**
+   * @brief The Dynamics of the quadruped robot HyQ.
+   */
+  class HyqDynamicModel : public SingleRigidBodyDynamics
+  {
+  public:
+    HyqDynamicModel() : SingleRigidBodyDynamics(30.42,
+                                                1.16485, 2.21088, 2.3175, -0.00137526, -0.00062895, -0.000189223,
+                                                4) {}
+
+  }; /* namespace towr */
 
 #endif /* TOWR_TOWR_ROS_INCLUDE_TOWR_ROS_HYQ_MODEL_H_ */
+}

@@ -24,8 +24,8 @@
   </node>
   
   <!-- Launch rviz with specific configuration -->
-  <node name="rviz_xpp" pkg="rviz" type="rviz" args="-d $(find towr_ros)/rviz/xpp_towr.rviz">
-  </node>
+  <!-- <node name="rviz_xpp" pkg="rviz" type="rviz" args="-d $(find towr_ros)/rviz/xpp_towr.rviz">
+  </node> -->
   
   <!--  Launches the URDF visualizers  --> 
   <include file="$(find xpp_hyq)/launch/all.launch"></include>

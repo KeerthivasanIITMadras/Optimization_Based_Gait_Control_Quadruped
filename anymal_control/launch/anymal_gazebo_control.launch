@@ -25,6 +25,9 @@
     <node name="controller_spawner" pkg="controller_manager" type="spawner"
         respawn="$(arg respawn_controller)"
         output="screen" args="joint_states_controller joint_group_position_controller">
-</node>
+    </node>
+    <include file="$(find towr_ros)/launch/towr_ros.launch" />
+    <node name="interface" pkg="anymal_control" type="interface" output="screen" />
+
 
 </launch>

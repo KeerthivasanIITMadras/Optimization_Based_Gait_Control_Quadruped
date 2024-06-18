@@ -9,6 +9,7 @@
 #include <actionlib/client/simple_action_client.h>
 #include <string>
 #include <vector>
+#include <xpp_msgs/RobotStateCartesian.h>
 
 using namespace std;
 typedef actionlib::SimpleActionClient<control_msgs ::FollowJointTrajectoryAction> TrajClient;
@@ -18,7 +19,9 @@ class Msg_Interface
 private:
     TrajClient *traj_client_;
     std::vector<sensor_msgs::JointState> joint_trajectory;
+    std::vector<ros::Publisher> force_pub;
     ros::Subscriber sub;
+    ros::Subscriber sub_forces;
     ros::Timer timer;
     ros::Duration timeout_duration;
     ros::Time prev_time;
@@ -28,8 +31,13 @@ private:
 public:
     Msg_Interface(ros::NodeHandle *n)
     {
-        // ros::Publisher joint_pub = n.advertise<control_msgs::FollowJointTrajectoryAction>("/joint_group_position_controller/command", 100);
+        for (int i = 0; i < 4; i++)
+        {
+            force_pub.push_back(n->advertise<geometry_msgs::Vector3>("force_at_contact_" + std::to_string(i + 1), 100));
+        }
+        force_pub.resize(4);
         sub = n->subscribe("/xpp/joint_hyq_des", 10, &Msg_Interface::msg_callback, this);
+        sub_forces = n->subscribe("/xpp/state_des", 10, &Msg_Interface::force_callback, this);
         // change the below topic
         traj_client_ = new TrajClient("/joint_group_position_controller/follow_joint_trajectory", true);
         while (!traj_client_->waitForServer(ros::Duration(5.0)))
@@ -51,6 +59,13 @@ public:
         sensor_msgs::JointState joints = msg.joint_state;
         joint_trajectory.push_back(joints);
         prev_time = ros::Time::now();
+    }
+    void force_callback(const xpp_msgs::RobotStateCartesian &msg)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            force_pub[i].publish(msg.ee_forces[i]);
+        }
     }
     void startTrajectory(control_msgs::FollowJointTrajectoryGoal goal)
     {

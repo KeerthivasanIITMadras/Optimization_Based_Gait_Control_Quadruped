@@ -7,7 +7,7 @@ project(anymal_control)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED roscpp rospy std_msgs actionlib actionlib_msgs xpp_msgs)
+find_package(catkin REQUIRED roscpp rospy std_msgs actionlib actionlib_msgs xpp_msgs gazebo_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -202,4 +202,7 @@ ${catkin_INCLUDE_DIRS}
 # catkin_add_nosetests(test)
 add_executable(interface src/interface.cpp)
 target_link_libraries(interface ${catkin_LIBRARIES})
+
+add_executable(get_contact_forces src/get_contact_forces.cpp)
+target_link_libraries(get_contact_forces ${catkin_LIBRARIES})
 

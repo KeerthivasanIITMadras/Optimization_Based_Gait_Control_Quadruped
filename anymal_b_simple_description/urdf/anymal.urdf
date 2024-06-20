@@ -262,11 +262,11 @@
         <sensor name='LF_contact' type='contact'>
             <always_on>true</always_on>
             <contact>
-                <collision>LF_SHANK_fixed_joint_lump__LF_COLLISION_collision_2</collision>
+                <collision>LF_SHANK_fixed_joint_lump__LF_FOOT_collision_2</collision>
             </contact>
             <plugin name="force_plugin" filename="libgazebo_ros_bumper.so">
-                <bumperTopicName>/gazebo/LF_force</bumperTopicName>
-                <frame_name>LF_FOOT</frame_name>
+                <bumperTopicName>lf_force</bumperTopicName>
+                <frameName>LF_FOOT</frameName>
             </plugin>
         </sensor>
     </gazebo>

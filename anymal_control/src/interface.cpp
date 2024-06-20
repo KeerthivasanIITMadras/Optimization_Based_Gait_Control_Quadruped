@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <xpp_msgs/RobotStateCartesian.h>
+#include <gazebo_msgs/ContactsState.h>
 
 using namespace std;
 typedef actionlib::SimpleActionClient<control_msgs ::FollowJointTrajectoryAction> TrajClient;
@@ -22,6 +23,8 @@ private:
     std::vector<ros::Publisher> force_pub;
     ros::Subscriber sub;
     ros::Subscriber sub_forces;
+    ros::Subscriber sub_gazebo_forces;
+    ros::Publisher gazebo_force_pub;
     ros::Timer timer;
     ros::Duration timeout_duration;
     ros::Time prev_time;
@@ -36,8 +39,10 @@ public:
             force_pub.push_back(n->advertise<geometry_msgs::Vector3>("force_at_contact_" + std::to_string(i + 1), 100));
         }
         force_pub.resize(4);
+        gazebo_force_pub = n->advertise<geometry_msgs::Vector3>("force_from_gazebo_lf", 100);
         sub = n->subscribe("/xpp/joint_hyq_des", 10, &Msg_Interface::msg_callback, this);
         sub_forces = n->subscribe("/xpp/state_des", 10, &Msg_Interface::force_callback, this);
+        sub_gazebo_forces = n->subscribe("/lf_force", 10, &Msg_Interface::gazebo_force_callback, this);
         // change the below topic
         traj_client_ = new TrajClient("/joint_group_position_controller/follow_joint_trajectory", true);
         while (!traj_client_->waitForServer(ros::Duration(5.0)))
@@ -52,6 +57,15 @@ public:
     ~Msg_Interface()
     {
         delete traj_client_;
+    }
+    void gazebo_force_callback(const gazebo_msgs::ContactsState &msg)
+    {
+        string ground = "ground_plane::link::collision";
+        if (msg.states.size() > 0 && ground.compare(msg.states[0].collision2_name) == 0)
+        {
+            geometry_msgs::Vector3 force = msg.states[0].total_wrench.force;
+            gazebo_force_pub.publish(force);
+        }
     }
     void msg_callback(const xpp_msgs::RobotStateJoint &msg)
     {
